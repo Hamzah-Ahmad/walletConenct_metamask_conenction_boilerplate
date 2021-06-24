@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { makeStyles } from "@material-ui/styles";
-import Button from "../Button";
+import { Button } from "@material-ui/core";
+
 import { useWeb3React } from "@web3-react/core";
 
 import {

@@ -7,10 +7,10 @@ import { isMobile } from "react-device-detect";
 
 // import coinbaseLogo from "../Assets/wallets/coinbase.png";
 // import fortmaticLogo from "../Assets/wallets/fortmatic.png";
-import injectedLogo from "../Assets/wallets/injected.png";
-import metamaskLogo from "../Assets/wallets/metamask.png";
+import injectedLogo from "../assets/wallets/injected.png";
+import metamaskLogo from "../assets/wallets/metamask.png";
 // import portisLogo from "../Assets/wallets/portis.png";
-import walletconnectLogo from "../Assets/wallets/walletconnect.png";
+import walletconnectLogo from "../assets/wallets/walletconnect.png";
 
 // const REACT_APP_NETWORK_URL1 = `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`;
 // const REACT_APP_NETWORK_URL4 = `https://rinkeby.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`;
