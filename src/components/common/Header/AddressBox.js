@@ -4,25 +4,27 @@ import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-// import WalletConnect from "../../../WalletConnect";
-import { Button } from "@material-ui/core";
-import ModalList from "../../Modals/ModalList";
+import Button from "@material-ui/core/Button";
 
+import ModalList from "../../Modals/ModalList";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { useWeb3React } from "@web3-react/core";
 
-import BinanceLogo from "../../../assets/svgs/binance.svg";
 import EthereumLogo from "../../../assets/svgs/ethereum.svg";
-import { ERC_CHAIN, BEP_CHAIN } from "../../../../contract/constants";
+import BinanceLogo from "../../../assets/svgs/binance.svg";
+
+import { chainMap } from "../../../utils/chainMap";
 
 import { walletList } from "../../../utils/web3Connectors";
 import { conciseAddress } from "../../../utils/formattingFunctions";
-
 import {
   useEagerConnect,
   useActivateWallet,
+  useInactiveListener,
 } from "../../../hooks/walletConnectHooks";
+
+// import { PendingTxContext } from "../../../../context/PendingTxContext";
 
 const useStyles = makeStyles((theme) => ({
   btn: {
@@ -83,17 +85,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const AddresBox = ({ disconnectWallet }) => {
+  const {
+    connector,
+    library,
+    chainId,
+    account,
+    activate,
+    deactivate,
+    active,
+    error,
+  } = useWeb3React();
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down("xs"));
   const [openModal, setOpenModal] = useState();
 
-  const { account, chainId } = useWeb3React();
+  //   const { pendingTransactions, setPendingTransactions } =
+  //     useContext(PendingTxContext);
 
   // Wallet Connect
   const [open, setOpen] = useState(false);
   const [loadingValue, setLoadingValue] = useState(walletList || []);
+
+  const [activatingConnector, setActivatingConnector] = React.useState();
+
+  React.useEffect(() => {
+    if (activatingConnector && activatingConnector === connector) {
+      setActivatingConnector(undefined);
+    }
+  }, [activatingConnector, connector]);
+
   const triedEager = useEagerConnect();
+
+  useInactiveListener(!triedEager || !!activatingConnector);
+
   const activateWallet = useActivateWallet();
 
   const toggleModal = () => {
@@ -102,6 +127,7 @@ const AddresBox = ({ disconnectWallet }) => {
 
   const onClickWalletConnector = async ({ connector, name }) => {
     // console.log("connecting wallet", connector, name);
+    setActivatingConnector(connector);
     setLoadingValue(name);
     await activateWallet(connector, toggleModal);
     setLoadingValue("");
@@ -119,7 +145,7 @@ const AddresBox = ({ disconnectWallet }) => {
           <div className={classes.innerItems}>
             {account && (
               <img
-                src={chainId == BEP_CHAIN ? BinanceLogo : EthereumLogo}
+                src={chainMap[chainId]?.logo}
                 className={classes.tokenLogo}
               />
             )}
